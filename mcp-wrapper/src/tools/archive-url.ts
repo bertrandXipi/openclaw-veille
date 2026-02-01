@@ -27,8 +27,9 @@ export type ArchiveUrlOutput = z.infer<typeof ArchiveUrlOutputSchema>;
 const rateLimiter = new RateLimiter();
 const monitor = new Monitor();
 
-// Second-brain API URL (configured via env)
+// Second-brain API URL and token (configured via env)
 const SECOND_BRAIN_API_URL = process.env.SECOND_BRAIN_API_URL || 'http://localhost:3100';
+const SECOND_BRAIN_API_TOKEN = process.env.SECOND_BRAIN_API_TOKEN || '';
 
 // Response type from second-brain API
 interface SecondBrainResponse {
@@ -82,6 +83,7 @@ export async function archiveUrl(input: ArchiveUrlInput): Promise<ArchiveUrlOutp
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SECOND_BRAIN_API_TOKEN}`,
       },
       body: JSON.stringify({
         url: input.url,
