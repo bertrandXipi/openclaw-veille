@@ -1,0 +1,145 @@
+# OpenClaw Configuration for Veille Automatique
+# 
+# This config sets up OpenClaw to:
+# 1. Browse Reddit for tech content
+# 2. Archive interesting posts via MCP tool (archive_url)
+# 3. Accept commands via WhatsApp
+#
+# Prerequisites:
+# - GEMINI_API_KEY environment variable
+# - second-brain API running on SECOND_BRAIN_API_URL
+# - MCP wrapper built and available
+
+version: "1.0"
+
+# Agent identity
+agent:
+  name: "VeilleBot"
+  description: "Agent autonome de veille technologique"
+  
+# LLM Configuration
+model:
+  provider: "google"
+  model: "gemini-2.5-flash"
+  # API key from environment: GEMINI_API_KEY
+  
+# Safety limits
+limits:
+  max_steps: 15          # Max steps per task (prevent infinite loops)
+  timeout_seconds: 300   # 5 minutes max per task
+  max_tokens: 8192       # Max tokens per response
+
+# MCP Tools Configuration
+mcp:
+  servers:
+    - name: "second-brain"
+      command: "node"
+      args: ["./mcp-wrapper/dist/index.js"]
+      env:
+        SECOND_BRAIN_API_URL: "${SECOND_BRAIN_API_URL:-http://localhost:3100}"
+
+# Scheduled Routines (Cron)
+routines:
+  # Morning hunt: 8h00 - Browse Reddit for overnight content
+  - name: "reddit-morning-hunt"
+    schedule: "0 8 * * *"
+    enabled: true
+    prompt: |
+      Tu es un agent de veille technologique. Ta mission est d'archiver les meilleurs contenus Reddit.
+      
+      ÉTAPES:
+      1. Browse ces subreddits: r/programming, r/MachineLearning, r/webdev, r/node, r/reactjs
+      2. Cherche les posts des dernières 24h avec >100 upvotes
+      3. Filtre pour: AI, LLMs, React, Node.js, TypeScript, freelancing, productivité
+      4. Archive les 10 meilleurs posts avec l'outil archive_url
+      5. Ajoute des tags pertinents (ai, llm, react, node, etc.)
+      
+      RÈGLES:
+      - Attends 30 secondes entre chaque archive (rate limit)
+      - Ne dépasse pas 10 archives par session
+      - Ignore les posts déjà archivés (vérifie le titre)
+      
+      Commence maintenant.
+
+  # Afternoon hunt: 14h00 - Quick check for trending content
+  - name: "reddit-afternoon-hunt"
+    schedule: "0 14 * * *"
+    enabled: true
+    prompt: |
+      Veille rapide de l'après-midi.
+      
+      ÉTAPES:
+      1. Browse r/programming et r/MachineLearning
+      2. Cherche les posts des 6 dernières heures avec >50 upvotes
+      3. Archive les 5 meilleurs posts avec archive_url
+      
+      Focus sur les breaking news et sujets trending.
+
+  # Evening hunt: 20h00 - End of day roundup
+  - name: "reddit-evening-hunt"
+    schedule: "0 20 * * *"
+    enabled: true
+    prompt: |
+      Veille du soir - dernière passe de la journée.
+      
+      ÉTAPES:
+      1. Browse r/programming, r/MachineLearning, r/LocalLLaMA
+      2. Cherche les posts des 6 dernières heures avec >100 upvotes
+      3. Archive les 5 meilleurs posts avec archive_url
+      
+      Priorité aux discussions techniques approfondies.
+
+# Channel Configuration (WhatsApp)
+channels:
+  whatsapp:
+    enabled: true
+    # Phone number whitelist (only these can send commands)
+    allowlist:
+      - "${MY_PHONE_NUMBER}"
+    
+    # Command patterns
+    commands:
+      archive:
+        pattern: "^[Aa]rchive\\s+(https?://\\S+)"
+        description: "Archive une URL"
+        prompt: |
+          L'utilisateur veut archiver cette URL: {url}
+          Utilise l'outil archive_url avec l'URL fournie.
+          Réponds avec le résultat (succès ou erreur).
+      
+      stats:
+        pattern: "^[Ss]tats$"
+        description: "Affiche les statistiques"
+        prompt: |
+          L'utilisateur demande les statistiques.
+          Utilise l'outil get_stats pour récupérer les métriques.
+          Formate la réponse de manière lisible.
+      
+      help:
+        pattern: "^[Hh]elp$"
+        description: "Affiche l'aide"
+        response: |
+          🤖 VeilleBot - Commandes disponibles:
+          
+          📥 Archive [URL] - Archive une URL
+          📊 Stats - Affiche les statistiques du jour
+          ❓ Help - Affiche cette aide
+          
+          Routines automatiques:
+          - 8h: Veille Reddit matin (10 posts)
+          - 14h: Veille Reddit après-midi (5 posts)
+          - 20h: Veille Reddit soir (5 posts)
+
+# Logging
+logging:
+  level: "info"
+  format: "json"
+  file: "/data/logs/openclaw.log"
+
+# Memory (OpenClaw built-in)
+memory:
+  enabled: true
+  # Remember archived URLs to avoid duplicates
+  instructions: |
+    Souviens-toi des URLs que tu as archivées pour éviter les doublons.
+    Quand tu archives une URL, note-la dans ta mémoire.
