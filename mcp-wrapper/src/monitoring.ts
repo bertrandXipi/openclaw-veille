@@ -1,6 +1,6 @@
 import { logger } from './logger.js';
 
-interface Metrics {
+export interface Metrics {
   archiveCount: number;
   errorCount: number;
   totalCostUSD: number;

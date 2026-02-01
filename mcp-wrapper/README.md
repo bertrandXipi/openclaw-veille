@@ -22,15 +22,20 @@ npm run build
 
 ## Configuration
 
-The wrapper integrates with existing second-brain code. Ensure these environment variables are set:
+The wrapper calls second-brain via shell script. Ensure these environment variables are set:
 
 ```bash
-# NotebookLM MCP server URL
+# Path to second-brain repository (default: ../../../../second-brain)
+SECOND_BRAIN_PATH=/path/to/second-brain
+
+# NotebookLM MCP server URL (used by second-brain)
 NOTEBOOKLM_MCP_URL=http://127.0.0.1:8000/mcp
 
 # Optional: specific notebook ID (otherwise uses monthly notebook)
 NOTEBOOKLM_NOTEBOOK_ID=your-notebook-id
 ```
+
+The MCP wrapper validates and rate-limits requests, then calls `second-brain/batch-processor/process-url.js` to handle the actual archiving.
 
 ## Usage
 
