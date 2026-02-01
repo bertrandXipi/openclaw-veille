@@ -192,14 +192,14 @@ docker-compose restart
 
 ### 2.1 Script de Test
 
-- [ ] **T2.1.1** : Créer `scripts/test-mcp-gemini.sh`
+- [x] **T2.1.1** : Créer `scripts/test-mcp-gemini.sh` ✅
   - Démarrer MCP server en background
   - Appeler Gemini CLI avec MCP
   - Vérifier création fiche markdown
   - Vérifier commit Git
   - **Durée** : 1h
 
-- [ ] **T2.1.2** : Créer `scripts/test-mcp-manual.ts`
+- [x] **T2.1.2** : Créer `scripts/test-mcp-manual.ts` ✅
   - Test sans Gemini CLI (JSON-RPC direct)
   - Spawn MCP server
   - Envoyer requête via stdin
@@ -536,12 +536,12 @@ docker-compose restart
 | Phase | Tâches Complétées | Tâches Totales | Progression |
 |-------|-------------------|----------------|-------------|
 | Phase 1 | 11 | 12 | 92% ✅ |
-| Phase 2 | 0 | 6 | 0% |
+| Phase 2 | 2 | 6 | 33% |
 | Phase 3 | 0 | 8 | 0% |
 | Phase 4 | 0 | 7 | 0% |
 | Phase 5 | 0 | 6 | 0% |
 | Phase 6 | 0 | 8 | 0% |
-| **TOTAL** | **11** | **47** | **23%** |
+| **TOTAL** | **13** | **47** | **28%** |
 
 ---
 
