@@ -1,58 +1,52 @@
 version: "3.9"
 
 services:
+  # OpenClaw Gateway - Main agent service
   openclaw:
     image: openclaw/openclaw:latest
     container_name: openclaw-agent
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
-    read_only: true
-    tmpfs:
-      - /tmp
     volumes:
       - ./openclaw-data:/data
       - ./openclaw-config:/config:ro
-      - ${SECOND_BRAIN_PATH}/batch-processor:/app/batch-processor:ro
-      - ${FICHES_REPO_PATH}:/app/workdir/repo
     networks:
-      - brain-network
+      - veille-network
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - SECOND_BRAIN_API_URL=${SECOND_BRAIN_API_URL:-http://host.docker.internal:3100}
       - MY_PHONE_NUMBER=${MY_PHONE_NUMBER}
-      - NOTEBOOKLM_MCP_URL=${NOTEBOOKLM_MCP_URL}
+      - OPENCLAW_CONFIG=/config/config.yaml
+    ports:
+      - "18789:18789"  # Gateway UI
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     deploy:
       resources:
         limits:
           cpus: '2'
           memory: 2G
-    depends_on:
-      - mcp-wrapper
-  
+
+  # MCP Wrapper - Provides archive_url tool to OpenClaw
   mcp-wrapper:
     build: ./mcp-wrapper
     container_name: mcp-wrapper
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
-    volumes:
-      - ${SECOND_BRAIN_PATH}/batch-processor:/app/batch-processor:ro
-      - ${FICHES_REPO_PATH}:/app/workdir/repo
     networks:
-      - brain-network
+      - veille-network
     environment:
-      - NOTEBOOKLM_MCP_URL=${NOTEBOOKLM_MCP_URL}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - SECOND_BRAIN_API_URL=${SECOND_BRAIN_API_URL:-http://host.docker.internal:3100}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     deploy:
       resources:
         limits:
           cpus: '1'
-          memory: 1G
-    ports:
-      - "3000:3000"
+          memory: 512M
 
 networks:
-  brain-network:
+  veille-network:
     driver: bridge
-    internal: false  # Allow external access (for GitHub, NotebookLM)
