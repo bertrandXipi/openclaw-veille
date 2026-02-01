@@ -64,6 +64,7 @@ export async function archiveUrl(input: ArchiveUrlInput): Promise<ArchiveUrlOutp
     
     // 3. Fetch content
     logger.info('Fetching content...');
+    // @ts-ignore - JavaScript module without types
     const { fetchAndExtract } = await import('../../../../second-brain/batch-processor/src/fetch-content.js');
     const fetchResult = await fetchAndExtract(input.url);
     
@@ -72,6 +73,7 @@ export async function archiveUrl(input: ArchiveUrlInput): Promise<ArchiveUrlOutp
     
     // 5. Add to NotebookLM
     logger.info('Adding to NotebookLM...');
+    // @ts-ignore - JavaScript module without types
     const { addToNotebookLM, getDetailedAnalysis } = await import('../../../../second-brain/batch-processor/src/notebooklm-http.js');
     
     const notebookResult = await addToNotebookLM(input.url, sanitizedContent, {
@@ -88,6 +90,7 @@ export async function archiveUrl(input: ArchiveUrlInput): Promise<ArchiveUrlOutp
     
     // 7. Generate markdown
     logger.info('Generating markdown...');
+    // @ts-ignore - JavaScript module without types
     const { generateMarkdownV2 } = await import('../../../../second-brain/batch-processor/src/markdown-generator-v2.js');
     
     const item = {
@@ -108,6 +111,7 @@ export async function archiveUrl(input: ArchiveUrlInput): Promise<ArchiveUrlOutp
     );
     
     // 8. Save markdown file
+    // @ts-ignore - JavaScript module without types
     const { saveMarkdownFile } = await import('../../../../second-brain/batch-processor/src/file-manager.js');
     const markdownPath = await saveMarkdownFile(markdown, fetchResult.title);
     
@@ -168,6 +172,6 @@ export function getRateLimiterStats() {
 /**
  * Get monitoring status
  */
-export function getMonitoringStatus() {
+export function getMonitoringStatus(): ReturnType<typeof monitor.getStatus> {
   return monitor.getStatus();
 }
