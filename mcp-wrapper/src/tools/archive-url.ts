@@ -28,6 +28,117 @@ export type ArchiveUrlOutput = z.infer<typeof ArchiveUrlOutputSchema>;
 const rateLimiter = new RateLimiter();
 const monitor = new Monitor();
 
+// Second-brain API URL
+const SECOND_BRAIN_API_URL = process.env.SECOND_BRAIN_API_URL || 'http://localhost:3100';
+
+/**
+ * Archive URL tool implementation
+ * Calls second-brain HTTP API for the actual archiving
+ */
+export async function archiveUrl(input: ArchiveUrlInput): Promise<ArchiveUrlOutput> {
+  const startTime = Date.now();
+  
+  logger.info('Archive URL request', { url: input.url, tags: input.tags });
+  
+  try {
+    // 1. Validation
+    if (!validateUrl(input.url)) {
+      logger.warn('URL validation failed', { url: input.url });
+      return {
+        success: false,
+        message: 'URL not allowed (domain not in whitelist)',
+        error: 'VALIDATION_ERROR',
+      };
+    }
+    
+    const sanitizedTags = sanitizeTags(input.tags || []);
+    const sanitizedNote = input.note ? sanitizeNote(input.note) : '';
+    
+    // 2. Rate limiting
+    const rateLimitCheck = rateLimiter.canMakeRequest();
+    if (!rateLimitCheck.allowed) {
+      logger.warn('Rate limit exceeded', { reason: rateLimitCheck.reason });
+      return {
+        success: false,
+        message: `Rate limit exceeded: ${rateLimitCheck.reason}`,
+        error: 'RATE_LIMIT_EXCEEDED',
+      };
+    }
+    
+    // 3. Call second-brain API
+    logger.info('Calling second-brain API...');
+    
+    const response = await fetch(`${SECOND_BRAIN_API_URL}/archive`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url: input.url,
+        tags: sanitizedTags,
+        note: sanitizedNote,
+        source: 'openclaw',
+      }),
+    });
+    
+    const result = await response.json();
+    
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || 'Archive failed');
+    }
+    
+    // 4. Record metrics
+    rateLimiter.recordRequest();
+    monitor.recordArchive(0.05); // Estimate $0.05 per archive
+    
+    const duration = Date.now() - startTime;
+    logger.info('Archive completed', { 
+      url: input.url, 
+      duration,
+      markdownPath: result.markdown_path,
+      notebookUrl: result.notebook_url 
+    });
+    
+    return {
+      success: true,
+      message: `Successfully archived: ${result.title}`,
+      markdown_path: result.markdown_path,
+      notebook_url: result.notebook_url,
+      source_id: result.source_id,
+    };
+    
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    logger.error('Archive failed', { 
+      url: input.url, 
+      error: error instanceof Error ? error.message : String(error),
+      duration 
+    });
+    
+    monitor.recordError(error instanceof Error ? error : new Error(String(error)));
+    
+    return {
+      success: false,
+      message: 'Archive failed',
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+/**
+ * Get rate limiter stats
+ */
+export function getRateLimiterStats() {
+  return rateLimiter.getStats();
+}
+
+/**
+ * Get monitoring status
+ */
+export function getMonitoringStatus() {
+  return monitor.getStatus();
+}
+
 /**
  * Archive URL tool implementation
  * Integrates with second-brain code for fetching, NotebookLM, and markdown generation
