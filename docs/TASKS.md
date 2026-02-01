@@ -49,7 +49,7 @@ docker-compose restart
 
 | Phase | Durée | Tâches | Statut |
 |-------|-------|--------|--------|
-| Phase 1 : MCP Wrapper | 1-2 jours | 12 tâches | ⏳ À faire |
+| Phase 1 : MCP Wrapper | 1-2 jours | 12 tâches | ✅ **COMPLÉTÉ** (11/12) |
 | Phase 2 : Test Gemini CLI | 1 jour | 6 tâches | ⏳ À faire |
 | Phase 3 : VPS Setup | 1-2 jours | 8 tâches | ⏳ À faire |
 | Phase 4 : Config OpenClaw | 1 jour | 7 tâches | ⏳ À faire |
@@ -59,24 +59,24 @@ docker-compose restart
 
 ---
 
-## 🟢 Phase 1 : MCP Wrapper (Jours 1-2)
+## 🟢 Phase 1 : MCP Wrapper (Jours 1-2) ✅ COMPLÉTÉ
 
-### 1.1 Setup Projet TypeScript
+### 1.1 Setup Projet TypeScript ✅
 
-- [ ] **T1.1.1** : Créer `mcp-wrapper/package.json`
+- [x] **T1.1.1** : Créer `mcp-wrapper/package.json` ✅
   - Dépendances : `@modelcontextprotocol/sdk`, `zod`, `simple-git`
   - DevDependencies : `typescript`, `vitest`, `@types/node`
   - Scripts : `build`, `test`, `dev`
   - **Durée** : 15 min
 
-- [ ] **T1.1.2** : Créer `mcp-wrapper/tsconfig.json`
+- [x] **T1.1.2** : Créer `mcp-wrapper/tsconfig.json` ✅
   - Target : ES2022
   - Module : ESNext
   - ModuleResolution : node
   - OutDir : dist
   - **Durée** : 10 min
 
-- [ ] **T1.1.3** : Créer structure de dossiers
+- [x] **T1.1.3** : Créer structure de dossiers ✅
   ```
   mcp-wrapper/
   ├── src/
@@ -91,9 +91,9 @@ docker-compose restart
   ```
   - **Durée** : 5 min
 
-### 1.2 Implémentation Validation
+### 1.2 Implémentation Validation ✅
 
-- [ ] **T1.2.1** : Implémenter `validation.ts`
+- [x] **T1.2.1** : Implémenter `validation.ts` ✅
   - Fonction `validateUrl(url: string): boolean`
   - Whitelist de domaines (Reddit, HackerNews, YouTube, etc.)
   - Fonction `sanitizeTags(tags: string[]): string[]`
@@ -101,29 +101,29 @@ docker-compose restart
   - **Durée** : 1h
   - **Référence** : DESIGN.md section "Validation d'Entrée"
 
-- [ ] **T1.2.2** : Tests unitaires pour validation
+- [x] **T1.2.2** : Tests unitaires pour validation ✅
   - Test whitelist domaines
   - Test sanitization tags
   - Test sanitization note (détection patterns dangereux)
   - **Durée** : 1h
 
-### 1.3 Implémentation Sanitization
+### 1.3 Implémentation Sanitization ✅
 
-- [ ] **T1.3.1** : Implémenter `content-sanitizer.ts`
+- [x] **T1.3.1** : Implémenter `content-sanitizer.ts` ✅
   - Fonction `sanitizeContent(content: string): string`
   - Détection patterns injection : "ignore previous instructions", etc.
   - Limite de taille : 50000 caractères
   - **Durée** : 1h
   - **Référence** : DESIGN.md section "Sanitization du Contenu"
 
-- [ ] **T1.3.2** : Tests unitaires pour sanitization
+- [x] **T1.3.2** : Tests unitaires pour sanitization ✅
   - Test détection injections
   - Test limite de taille
   - **Durée** : 30 min
 
-### 1.4 Implémentation Rate Limiting
+### 1.4 Implémentation Rate Limiting ✅
 
-- [ ] **T1.4.1** : Implémenter `rate-limiter.ts`
+- [x] **T1.4.1** : Implémenter `rate-limiter.ts` ✅
   - Classe `RateLimiter`
   - Limite quotidienne : 30 archives
   - Limite horaire : 10 archives
@@ -131,29 +131,29 @@ docker-compose restart
   - **Durée** : 1h30
   - **Référence** : DESIGN.md section "Rate Limiting"
 
-- [ ] **T1.4.2** : Tests unitaires pour rate limiter
+- [x] **T1.4.2** : Tests unitaires pour rate limiter ✅
   - Test limite quotidienne
   - Test limite horaire
   - Test intervalle minimum
   - **Durée** : 1h
 
-### 1.5 Implémentation Monitoring
+### 1.5 Implémentation Monitoring ✅
 
-- [ ] **T1.5.1** : Implémenter `monitoring.ts`
+- [x] **T1.5.1** : Implémenter `monitoring.ts` ✅
   - Classe `Monitor`
   - Métriques : count, errors, cost
   - Alertes : >50 archives, >10 erreurs, >5 USD
   - **Durée** : 1h
   - **Référence** : DESIGN.md section "Monitoring et Alertes"
 
-- [ ] **T1.5.2** : Implémenter `logger.ts`
+- [x] **T1.5.2** : Implémenter `logger.ts` ✅
   - Logs JSON structurés
   - Fonction `log(entry: LogEntry): void`
   - **Durée** : 30 min
 
-### 1.6 Implémentation Tool MCP
+### 1.6 Implémentation Tool MCP ✅
 
-- [ ] **T1.6.1** : Implémenter `tools/archive-url.ts`
+- [x] **T1.6.1** : Implémenter `tools/archive-url.ts` ✅
   - Schema Zod pour input/output
   - Fonction `archiveUrl(input: ArchiveUrlInput): Promise<ArchiveUrlOutput>`
   - Intégration validation, sanitization, rate limiting
@@ -161,20 +161,21 @@ docker-compose restart
   - **Durée** : 3h
   - **Référence** : DESIGN.md section "Implémentation du Tool"
 
-- [ ] **T1.6.2** : Implémenter `index.ts` (MCP Server)
+- [x] **T1.6.2** : Implémenter `index.ts` (MCP Server) ✅
   - Initialisation serveur MCP (stdio transport)
   - Enregistrement tool `archive_url`
   - Gestion erreurs
   - **Durée** : 1h
 
-### 1.7 Tests et Documentation
+### 1.7 Tests et Documentation ✅
 
 - [ ] **T1.7.1** : Tests d'intégration
   - Test complet du flow : validation → fetch → NotebookLM → Git
   - Mock des services externes
   - **Durée** : 2h
+  - **Note** : Reporté à Phase 2 (tests manuels avec Gemini CLI)
 
-- [ ] **T1.7.2** : Documentation `mcp-wrapper/README.md`
+- [x] **T1.7.2** : Documentation `mcp-wrapper/README.md` ✅
   - Installation
   - Configuration
   - Utilisation
@@ -472,14 +473,14 @@ docker-compose restart
 
 ## ✅ Checklist de Validation Finale
 
-### Phase 1 : MCP Wrapper
-- [ ] Code TypeScript compilé sans erreur
-- [ ] Tests unitaires passent (100%)
-- [ ] Validation d'URL fonctionne
-- [ ] Sanitization détecte injections
-- [ ] Rate limiter respecte limites
-- [ ] Monitoring enregistre métriques
-- [ ] Logs JSON structurés
+### Phase 1 : MCP Wrapper ✅
+- [x] Code TypeScript compilé sans erreur
+- [x] Tests unitaires passent (100%)
+- [x] Validation d'URL fonctionne
+- [x] Sanitization détecte injections
+- [x] Rate limiter respecte limites
+- [x] Monitoring enregistre métriques
+- [x] Logs JSON structurés
 
 ### Phase 2 : Test Gemini CLI
 - [ ] MCP server démarre
@@ -530,13 +531,13 @@ docker-compose restart
 
 | Phase | Tâches Complétées | Tâches Totales | Progression |
 |-------|-------------------|----------------|-------------|
-| Phase 1 | 0 | 12 | 0% |
+| Phase 1 | 11 | 12 | 92% ✅ |
 | Phase 2 | 0 | 6 | 0% |
 | Phase 3 | 0 | 8 | 0% |
 | Phase 4 | 0 | 7 | 0% |
 | Phase 5 | 0 | 6 | 0% |
 | Phase 6 | 0 | 8 | 0% |
-| **TOTAL** | **0** | **47** | **0%** |
+| **TOTAL** | **11** | **47** | **23%** |
 
 ---
 
