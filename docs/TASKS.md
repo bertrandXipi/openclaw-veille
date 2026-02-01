@@ -303,45 +303,38 @@ docker-compose restart
 
 ---
 
-## 🔵 Phase 4 : Config OpenClaw (Jours 5-6)
+## 🔵 Phase 4 : Config OpenClaw (Jours 5-6) ✅ EN COURS
 
 ### 4.1 Configuration OpenClaw
 
-- [ ] **T4.1.1** : Créer `openclaw-config/config.yaml`
+- [x] **T4.1.1** : Créer `openclaw-config/config.yaml` ✅
   - Configuration LLM (Gemini Flash)
   - Configuration agent (max_steps: 15)
   - Déclaration MCP server
   - **Durée** : 1h
   - **Référence** : DESIGN.md section "Configuration OpenClaw"
 
-- [ ] **T4.1.2** : Créer routines Reddit
+- [x] **T4.1.2** : Créer routines Reddit ✅
   - `reddit-morning-hunt` (8h)
   - `reddit-afternoon-hunt` (14h)
   - `reddit-evening-hunt` (20h)
   - **Durée** : 2h
 
-- [ ] **T4.1.3** : Créer `.env` sur le VPS
+- [x] **T4.1.3** : Créer `.env.example` ✅
   - GEMINI_API_KEY
-  - GITHUB_TOKEN
+  - SECOND_BRAIN_API_URL
   - MY_PHONE_NUMBER
-  - NOTEBOOKLM_MCP_URL
   - **Durée** : 15 min
 
 ### 4.2 Docker Compose
 
-- [ ] **T4.2.1** : Vérifier `docker-compose.yml`
+- [x] **T4.2.1** : Mettre à jour `docker-compose.yml` ✅
   - Services : openclaw, mcp-wrapper
-  - Volumes : second-brain (ro), workdir/repo
-  - Networks : brain-network
-  - Security : no-new-privileges, read-only
+  - Network : veille-network
+  - Security : no-new-privileges
   - **Durée** : 30 min
 
-- [ ] **T4.2.2** : Build MCP wrapper
-  ```bash
-  cd /opt/openclaw-veille/mcp-wrapper
-  npm install
-  npm run build
-  ```
+- [x] **T4.2.2** : Créer Dockerfile MCP wrapper ✅
   - **Durée** : 15 min
 
 ### 4.3 Premier Démarrage
@@ -538,10 +531,10 @@ docker-compose restart
 | Phase 1 | 11 | 12 | 92% ✅ |
 | Phase 2 | 2 | 6 | 33% |
 | Phase 3 | 0 | 8 | 0% |
-| Phase 4 | 0 | 7 | 0% |
+| Phase 4 | 5 | 7 | 71% |
 | Phase 5 | 0 | 6 | 0% |
 | Phase 6 | 0 | 8 | 0% |
-| **TOTAL** | **13** | **47** | **28%** |
+| **TOTAL** | **18** | **47** | **38%** |
 
 ---
 
