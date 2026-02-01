@@ -61,6 +61,10 @@ docker-compose restart
 
 ## 🟢 Phase 1 : MCP Wrapper (Jours 1-2) ✅ COMPLÉTÉ
 
+**Note architecture :** Le MCP wrapper appelle second-brain via **API HTTP** (pas d'imports directs).
+- second-brain expose `POST /archive` via `batch-processor/src/api.js`
+- openclaw-veille appelle cette API via `SECOND_BRAIN_API_URL`
+
 ### 1.1 Setup Projet TypeScript ✅
 
 - [x] **T1.1.1** : Créer `mcp-wrapper/package.json` ✅
